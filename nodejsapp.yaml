@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
       - name: nodejs-app
-        image: "devopshint/nodejsapp-1.0:latest"
+        image: "skkumar97260/sk-image:latest"
         ports:
           - containerPort: 3000
 ---
