@@ -9,7 +9,7 @@ pipeline {
         DOCKER_IMAGE = "skkumar97260/sk-image" // Docker Hub repository name
         DOCKER_TAG = "latest" // Docker tag
         DOCKER_CREDENTIALS = 'dockerhub-credentials' // Jenkins credentials ID for Docker Hub
-        AWS_CLUSTER_NAME = "sample" // Replace with your AWS EKS cluster name
+        AWS_CLUSTER_NAME = "demo" // Replace with your AWS EKS cluster name
         AWS_REGION = "us-east-1" // Replace with your AWS region
     }
 
