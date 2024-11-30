@@ -4,7 +4,6 @@ pipeline {
     tools {
         nodejs "nodejs" // Ensure this matches the name of your Node.js installation in Jenkins
     }
-
     environment {
         DOCKER_IMAGE = "skkumar97260/sk-image"
         DOCKER_TAG = "latest"
