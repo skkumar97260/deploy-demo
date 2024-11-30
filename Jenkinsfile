@@ -52,12 +52,13 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 withCredentials([string(credentialsId: 'dockerhub-credentials', variable: 'dockerhub-credentials')]) {
-                    script {
-                        // Ensure Docker login works by passing the token securely
-                         sh 'docker login -u skkumar97260 -p ${dockerhub-credentials}'
-                        sh "docker push ${DOCKER_IMAGE}:${DOCKER_TAG}"
-                    }
-                }
+            script {
+                echo "Docker login using token"
+                sh '''echo $dockerhub-credentials | docker login -u skkumar97260 --password-stdin'''
+                echo "Pushing Docker image"
+                sh "docker push ${DOCKER_IMAGE}:${DOCKER_TAG}"
+            }
+        }
             }
         }
 
