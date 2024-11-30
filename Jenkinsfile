@@ -8,7 +8,6 @@ pipeline {
     environment {
         DOCKER_IMAGE = "skkumar97260/sk-image"
         DOCKER_TAG = "latest"
-        DOCKER_CREDENTIALS = 'dockerhub-credentials'
         AWS_CLUSTER_NAME = "demo"
         AWS_REGION = "us-east-1"
     }
@@ -50,16 +49,18 @@ pipeline {
         }
 
         stage('Push Docker Image') {
-
             steps {
-                withCredentials([string(credentialsId: 'dockerhub-credentials', variable: 'dockerhub-credentials')]) {
-            script {
-                 echo "Docker login using token"
-                sh '''echo $dockerhub-credentials | docker login -u skkumar97260 --password-stdin'''
-                 echo "Pushing Docker image"
-                sh "docker push ${DOCKER_IMAGE}:${DOCKER_TAG}"
-            }
-        }
+                // Using username and password credentials
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                    script {
+                        echo "Docker login using credentials"
+                        sh '''
+                            echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
+                        '''
+                        echo "Pushing Docker image"
+                        sh "docker push ${DOCKER_IMAGE}:${DOCKER_TAG}"
+                    }
+                }
             }
         }
 
