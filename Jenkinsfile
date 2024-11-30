@@ -51,12 +51,13 @@ pipeline {
 
         stage('Push Docker Image') {
             steps {
-                withCredentials([string(credentialsId: 'dockerhub-credentials', variable: 'DOCKER_TOKEN')]) {
-                    sh """
-                        echo $DOCKER_TOKEN | docker login -u <your-dockerhub-username> --password-stdin
-                        docker push ${DOCKER_IMAGE}:${DOCKER_TAG}
-                    """
-                }
+               withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_TOKEN')]) {
+    script {
+        // Use both username and token for Docker login
+        sh "docker login -u $DOCKER_USER -p $DOCKER_TOKEN"
+        sh "docker push skkumar97260/sk-image:latest"
+    }
+}
             }
         }
 
