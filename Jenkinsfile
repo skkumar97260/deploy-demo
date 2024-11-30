@@ -50,6 +50,7 @@ pipeline {
         }
 
         stage('Push Docker Image') {
+
             steps {
                 withCredentials([string(credentialsId: 'dockerhub-credentials', variable: 'dockerhub-credentials')]) {
             script {
