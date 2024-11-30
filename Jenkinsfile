@@ -34,7 +34,7 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 script {
-                    if (fileExists('./frontend/package.json')) {
+                    if (fileExists('./package.json')) {
                         sh 'npm install --prefix ./frontend'
                     } else {
                         error "Missing package.json in ./frontend directory"
