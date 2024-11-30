@@ -53,9 +53,9 @@ pipeline {
             steps {
                 withCredentials([string(credentialsId: 'dockerhub-credentials', variable: 'dockerhub-credentials')]) {
             script {
-                // echo "Docker login using token"
-                sh '''echo \$dockerhub-credentials | docker login -u skkumar97260 --password-stdin'''
-                // echo "Pushing Docker image"
+                 echo "Docker login using token"
+                sh '''echo $dockerhub-credentials | docker login -u skkumar97260 --password-stdin'''
+                 echo "Pushing Docker image"
                 sh "docker push ${DOCKER_IMAGE}:${DOCKER_TAG}"
             }
         }
