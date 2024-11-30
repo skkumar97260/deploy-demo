@@ -66,42 +66,25 @@ pipeline {
 
         stage('Deploy to Kubernetes') {
             steps {
-                script {
-                    // Install kubectl if it's not installed
-                    sh '''
-                        if ! command -v kubectl &> /dev/null; then
-                            echo "kubectl not found, installing..."
-                            curl -LO "https://dl.k8s.io/release/v1.24.0/bin/linux/amd64/kubectl"
-                            chmod +x kubectl
-                            mv kubectl /usr/local/bin/kubectl  # Ensure it is available globally
-                        fi
-                    '''
-
-                    // Set up AWS EKS credentials
-                    withCredentials([string(credentialsId: 'aws-access-key-id', variable: 'AWS_ACCESS_KEY_ID'), string(credentialsId: 'aws-secret-access-key', variable: 'AWS_SECRET_ACCESS_KEY')]) {
-                        // Set AWS credentials as environment variables for AWS CLI
-                        sh '''
-                            export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
-                            export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
-                            export AWS_DEFAULT_REGION=${AWS_REGION}
-                            
-                            # Update kubeconfig to use the EKS cluster
-                            aws eks update-kubeconfig --name ${AWS_CLUSTER_NAME} --region ${AWS_REGION}
-                        '''
-                    }
-
-                    // Get Kubernetes namespaces
-                    echo "Getting Kubernetes namespaces..."
-                    sh "kubectl get ns"
-
-                    // Apply Kubernetes manifest and check rollout status
-                    echo "Deploying Node.js app to Kubernetes..."
-                    sh '''
-                        kubectl apply -f nodejsapp.yaml
-                        kubectl rollout status deployment/nodejs-app
-                    '''
-                }
+               script {
+            // Set up AWS EKS credentials
+            withCredentials([string(credentialsId: 'aws-access-key-id', variable: 'AWS_ACCESS_KEY_ID'), string(credentialsId: 'aws-secret-access-key', variable: 'AWS_SECRET_ACCESS_KEY')]) {
+                // Set AWS credentials as environment variables for AWS CLI
+                sh '''
+                    export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+                    export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+                    export AWS_DEFAULT_REGION=${AWS_REGION}
+                    
+                    # Update kubeconfig to use the EKS cluster
+                    aws eks update-kubeconfig --name ${AWS_CLUSTER_NAME} --region ${AWS_REGION}
+                    
+                    # Debug: Check if kubectl is configured correctly
+                    kubectl config view
+                    kubectl cluster-info
+                    kubectl get nodes
+                '''
             }
+        }
         }
     }
 
