@@ -1,29 +1,33 @@
 pipeline {
     agent any
     
-    tools { 
-        nodejs "NodeJS" // Ensure NodeJS is configured in Jenkins Global Tool Configuration
+    tools {
+        nodejs "nodejs" // Use the correct name of the NodeJS installation in Jenkins
     }
     
     environment {
-        DOCKER_IMAGE = "skkumar97260/sk-image" // Replace with your Docker Hub repo
-        DOCKER_TAG = "latest"
-        DOCKER_CREDENTIALS = 'dockerhub-credentials' // Replace with your Jenkins credentials ID
+        DOCKER_IMAGE = "skkumar97260/sk-image" // Docker Hub repository name
+        DOCKER_TAG = "latest" // Docker tag
+        DOCKER_CREDENTIALS = 'dockerhub-credentials' // Jenkins credentials ID for Docker Hub
+        AWS_CLUSTER_NAME = "sample" // Replace with your AWS EKS cluster name
+        AWS_REGION = "us-east-1" // Replace with your AWS region
     }
 
     stages {
-        stage("Clone code from GitHub") {
+        stage("Clone Code from GitHub") {
             steps {
                 script {
-                    checkout scmGit(branches: [[name: '*/main']], 
-                        userRemoteConfigs: [[credentialsId: 'GITHUB_CREDENTIALS', url: 'https://github.com/skkumar97260/deploy-demo.git']])
+                    checkout scmGit(
+                        branches: [[name: '*/main']], 
+                        userRemoteConfigs: [[credentialsId: 'GITHUB_CREDENTIALS', url: 'https://github.com/skkumar97260/deploy-demo.git']]
+                    )
                 }
             }
         }
         
         stage('Install Dependencies') {
             steps {
-                sh 'npm install'
+                sh 'npm install --prefix ./frontend'
             }
         }
 
@@ -38,11 +42,9 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 script {
-                    withCredentials([usernamePassword(credentialsId: "${DOCKER_CREDENTIALS}", usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                        sh """
-                            echo ${DOCKER_PASS} | docker login -u ${DOCKER_USER} --password-stdin
-                            docker push ${DOCKER_IMAGE}:${DOCKER_TAG}
-                        """
+                    withCredentials([string(credentialsId: 'dockerhub-credentials', variable: 'DOCKER_TOKEN')]) {
+                        sh "echo $DOCKER_TOKEN | docker login -u <your-dockerhub-username> --password-stdin"
+                        sh "docker push ${DOCKER_IMAGE}:${DOCKER_TAG}"
                     }
                 }
             }
@@ -51,9 +53,14 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 script {
-                    sh 'aws eks update-kubeconfig --name <cluster-name> --region <region>' // Update with your cluster details
+                    // Configure kubectl to connect to the AWS EKS cluster
+                    sh "aws eks update-kubeconfig --name ${AWS_CLUSTER_NAME} --region ${AWS_REGION}"
+                    
+                    // Apply Kubernetes deployment and service YAML files
                     sh 'kubectl apply -f ./k8s/frontend-deployment.yaml'
-                    sh 'kubectl rollout status deployment/nodejs-app' // Optional: Ensure deployment is successful
+                    
+                    // Optional: Wait for the deployment to complete
+                    sh 'kubectl rollout status deployment/nodejs-app'
                 }
             }
         }
