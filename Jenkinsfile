@@ -68,8 +68,8 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 sh "aws eks update-kubeconfig --name ${AWS_CLUSTER_NAME} --region ${AWS_REGION}"
-                sh "kubectl apply -f nodejsapp.yaml"
-                sh "kubectl rollout status deployment/nodejs-app"
+               sh "kubectl get ns"
+               sh "kubectl apply -f nodejsapp.yaml"
             }
         }
     }
