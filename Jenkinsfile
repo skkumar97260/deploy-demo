@@ -76,8 +76,7 @@ pipeline {
                         '''
                     }
 
-                    echo "Getting Kubernetes namespaces..."
-                    sh "kubectl get ns"
+                   
 
                     echo "Deploying Node.js app to Kubernetes..."
                     sh '''
