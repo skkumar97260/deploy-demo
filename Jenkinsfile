@@ -4,7 +4,6 @@ pipeline {
     tools {
         nodejs "nodejs" 
     }
-
     environment {
         DOCKER_IMAGE = "skkumar97260/sk-image"
         DOCKER_TAG = "latest"
