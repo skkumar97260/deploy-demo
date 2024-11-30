@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     tools {
-        nodejs "nodejs" // Ensure this matches your Node.js installation name in Jenkins
+        nodejs "nodejs" // Ensure this matches the name of your Node.js installation in Jenkins
     }
 
     environment {
@@ -34,10 +34,10 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 script {
-                    if (fileExists('./package.json')) {
-                        sh 'npm install --prefix ./frontend'
+                    if (fileExists('package.json')) {
+                        sh 'npm install'
                     } else {
-                        error "Missing package.json in ./frontend directory"
+                        error "Missing package.json in the root directory"
                     }
                 }
             }
@@ -45,7 +45,7 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ./frontend'
+                sh 'docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} .'
             }
         }
 
@@ -63,7 +63,7 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 sh 'aws eks update-kubeconfig --name ${AWS_CLUSTER_NAME} --region ${AWS_REGION}'
-                sh 'kubectl apply -f ./k8s/frontend-deployment.yaml'
+                sh 'kubectl apply -f nodejsapp.yaml'
                 sh 'kubectl rollout status deployment/nodejs-app'
             }
         }
