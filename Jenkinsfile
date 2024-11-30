@@ -45,28 +45,28 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} .'
+                sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
             }
         }
 
         stage('Push Docker Image') {
             steps {
-             withCredentials([string(credentialsId: 'dockerhub-credentials', variable: 'DOCKER_TOKEN')]) {
-            script {
-                // Securely login using password-stdin
-                sh """echo $DOCKER_TOKEN | docker login -u skkumar97260 --password-stdin"""
-                // Push the image
-                sh 'docker push skkumar97260/sk-image:latest'
-            }
-        }
+                withCredentials([string(credentialsId: 'dockerhub-credentials', variable: 'DOCKER_TOKEN')]) {
+                    script {
+                        // Securely login using password-stdin
+                        sh """echo \$DOCKER_TOKEN | docker login -u skkumar97260 --password-stdin"""
+                        // Push the image
+                        sh "docker push ${DOCKER_IMAGE}:${DOCKER_TAG}"
+                    }
+                }
             }
         }
 
         stage('Deploy to Kubernetes') {
             steps {
-                sh 'aws eks update-kubeconfig --name ${AWS_CLUSTER_NAME} --region ${AWS_REGION}'
-                sh 'kubectl apply -f nodejsapp.yaml'
-                sh 'kubectl rollout status deployment/nodejs-app'
+                sh "aws eks update-kubeconfig --name ${AWS_CLUSTER_NAME} --region ${AWS_REGION}"
+                sh "kubectl apply -f nodejsapp.yaml"
+                sh "kubectl rollout status deployment/nodejs-app"
             }
         }
     }
