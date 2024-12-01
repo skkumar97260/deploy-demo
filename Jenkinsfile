@@ -7,7 +7,7 @@ pipeline {
     environment {
         DOCKER_IMAGE = "skkumar97260/sk-image"
         DOCKER_TAG = "latest"
-        AWS_CLUSTER_NAME = "demo"
+        AWS_CLUSTER_NAME = "My-eks-cluster"
         AWS_REGION = "us-east-1"
     }
 
@@ -64,26 +64,9 @@ pipeline {
 
         stage('Deploy to Kubernetes') {
             steps {
-                script {
-                    withCredentials([string(credentialsId: 'aws-access-key-id', variable: 'AWS_ACCESS_KEY_ID'), string(credentialsId: 'aws-secret-access-key', variable: 'AWS_SECRET_ACCESS_KEY')]) {
-                        sh '''
-                            export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
-                            export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
-                            export AWS_DEFAULT_REGION=${AWS_REGION}
-                            
-                            # Update kubeconfig to use the EKS cluster
-                            aws eks update-kubeconfig --name ${AWS_CLUSTER_NAME} --region ${AWS_REGION}
-                        '''
-                    }
-
-                   
-
-                    echo "Deploying Node.js app to Kubernetes..."
-                    sh '''
-                        kubectl apply -f nodejsapp.yaml
-                        kubectl rollout status deployment/nodejs-app
-                    '''
-                }
+                 sh "aws eks update-kubeconfig --name ${AWS_CLUSTER_NAME} --region ${AWS_REGION}"
+                sh "kubectl apply -f nodejsapp.yaml"
+                sh "kubectl rollout status deployment/nodejs-app"
             }
         }
     }
