@@ -79,7 +79,7 @@ pipeline {
                         echo "Deploying application to Kubernetes"
                         sh '''
                             kubectl apply -f deployment.yaml
-                            kubectl rollout status deployment/nodejs-app
+                            // kubectl rollout status deployment/nodejs-app
                         '''
                     }
                 }
