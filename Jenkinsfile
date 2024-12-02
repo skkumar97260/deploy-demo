@@ -1,9 +1,10 @@
 pipeline {
     agent any
-        
+
     tools {
-        nodejs "nodejs" 
+        nodejs "nodejs" // Ensure Node.js is configured in Jenkins tools
     }
+
     environment {
         DOCKER_IMAGE = "skkumar97260/sk-image"
         DOCKER_TAG = "latest"
@@ -51,11 +52,11 @@ pipeline {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                     script {
-                        echo "Docker login using credentials"
+                        echo "Logging into DockerHub"
                         sh '''
                             echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
                         '''
-                        echo "Pushing Docker image"
+                        echo "Pushing Docker image to DockerHub"
                         sh "docker push ${DOCKER_IMAGE}:${DOCKER_TAG}"
                     }
                 }
@@ -64,15 +65,19 @@ pipeline {
 
         stage('Deploy to Kubernetes') {
             steps {
-                script {
-                    withCredentials([
-                        string(credentialsId: 'aws-access-key-id', variable: 'AWS_ACCESS_KEY_ID'),
-                        string(credentialsId: 'aws-secret-access-key', variable: 'AWS_SECRET_ACCESS_KEY')
-                    ]) {
+                withCredentials([
+                    string(credentialsId: 'aws-access-key-id', variable: 'AWS_ACCESS_KEY_ID'),
+                    string(credentialsId: 'aws-secret-access-key', variable: 'AWS_SECRET_ACCESS_KEY')
+                ]) {
+                    script {
+                        echo "Updating kubeconfig for EKS"
                         sh '''
                             export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
                             export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
-                            aws eks update-kubeconfig --region us-east-1 --name My-eks-cluster
+                            aws eks update-kubeconfig --region ${AWS_REGION} --name ${AWS_CLUSTER_NAME}
+                        '''
+                        echo "Deploying application to Kubernetes"
+                        sh '''
                             kubectl apply -f deployment.yaml
                             kubectl rollout status deployment/nodejs-app
                         '''
