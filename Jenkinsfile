@@ -72,7 +72,7 @@ pipeline {
                         sh '''
                             export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
                             export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
-                            aws eks update-kubeconfig --region $AWS_REGION --name $AWS_CLUSTER_NAME
+                            aws eks update-kubeconfig --region us-east-1 --name My-eks-cluster
                             kubectl apply -f deployment.yaml
                             kubectl rollout status deployment/nodejs-app
                         '''
