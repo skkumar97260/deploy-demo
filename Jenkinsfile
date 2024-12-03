@@ -75,6 +75,7 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 sh '''
+                    export KUBECONFIG=/var/lib/jenkins/.kube/config
                     kubectl apply -f deployment.yaml
                     kubectl rollout status deployment/nodejs-app
                 '''
