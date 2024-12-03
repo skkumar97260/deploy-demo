@@ -10,7 +10,7 @@ pipeline {
         DOCKER_TAG = "latest"
         AWS_CLUSTER_NAME = "My-eks-cluster"
         AWS_REGION = "us-east-1"
-        KUBECONFIG_PATH = "/var/lib/jenkins/.kube/config"
+        KUBECONFIG_PATH = "~/.kube/config" // Default kubeconfig path
     }
 
     stages {
@@ -51,17 +51,15 @@ pipeline {
                     usernameVariable: 'DOCKER_USERNAME',
                     passwordVariable: 'DOCKER_PASSWORD'
                 )]) {
-                    script {
-                        sh '''
-                            echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
-                            docker push ${DOCKER_IMAGE}:${DOCKER_TAG}
-                        '''
-                    }
+                    sh '''
+                        echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
+                        docker push ${DOCKER_IMAGE}:${DOCKER_TAG}
+                    '''
                 }
             }
         }
 
-        stage('Set Up AWS Authentication') {
+        stage('Deploy to Kubernetes') {
             steps {
                 withCredentials([
                     string(credentialsId: 'aws-access-key-id', variable: 'AWS_ACCESS_KEY_ID'),
@@ -71,20 +69,13 @@ pipeline {
                         export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
                         export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
                         aws eks update-kubeconfig --region ${AWS_REGION} --name ${AWS_CLUSTER_NAME} --kubeconfig ${KUBECONFIG_PATH}
-                    '''
-                }
-            }
-        }
+                        
+                        echo "Checking Kubernetes namespaces..."
+                        kubectl get ns
 
-        stage('Deploy to Kubernetes') {
-            steps {
-                script {
-                    withEnv(["KUBECONFIG=${KUBECONFIG_PATH}"]) {
-                        sh '''
-                            kubectl get ns
-                            kubectl apply -f nodejsapp.yaml
-                        '''
-                    }
+                        echo "Applying Kubernetes manifest..."
+                        kubectl apply -f nodejsapp.yaml
+                    '''
                 }
             }
         }
