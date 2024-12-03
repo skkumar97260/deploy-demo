@@ -1,8 +1,8 @@
 pipeline {
     agent any
- 
+
     tools {
-        nodejs "nodejs" // Ensure Node.js is configured in Jenkins tools
+        nodejs "nodejs" // Ensure Node.js is installed and configured in Jenkins
     }
 
     environment {
@@ -10,17 +10,19 @@ pipeline {
         DOCKER_TAG = "latest"
         AWS_CLUSTER_NAME = "My-eks-cluster"
         AWS_REGION = "us-east-1"
+        KUBECONFIG_PATH = "/var/lib/jenkins/.kube/config"
     }
 
     stages {
         stage('Clone Code from GitHub') {
             steps {
-                script {
-                    checkout scmGit(
-                        branches: [[name: '*/main']],
-                        userRemoteConfigs: [[credentialsId: 'GITHUB_CREDENTIALS', url: 'https://github.com/skkumar97260/deploy-demo.git']]
-                    )
-                }
+                checkout scmGit(
+                    branches: [[name: '*/main']],
+                    userRemoteConfigs: [[
+                        credentialsId: 'GITHUB_CREDENTIALS',
+                        url: 'https://github.com/skkumar97260/deploy-demo.git'
+                    ]]
+                )
             }
         }
 
@@ -44,14 +46,16 @@ pipeline {
 
         stage('Push Docker Image') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                withCredentials([usernamePassword(
+                    credentialsId: 'dockerhub-credentials',
+                    usernameVariable: 'DOCKER_USERNAME',
+                    passwordVariable: 'DOCKER_PASSWORD'
+                )]) {
                     script {
-                        echo "Logging into DockerHub"
                         sh '''
                             echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
+                            docker push ${DOCKER_IMAGE}:${DOCKER_TAG}
                         '''
-                        echo "Pushing Docker image to DockerHub"
-                        sh "docker push ${DOCKER_IMAGE}:${DOCKER_TAG}"
                     }
                 }
             }
@@ -66,7 +70,7 @@ pipeline {
                     sh '''
                         export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
                         export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
-                        aws eks update-kubeconfig --region ${AWS_REGION} --name ${AWS_CLUSTER_NAME}
+                        aws eks update-kubeconfig --region ${AWS_REGION} --name ${AWS_CLUSTER_NAME} --kubeconfig ${KUBECONFIG_PATH}
                     '''
                 }
             }
@@ -74,11 +78,14 @@ pipeline {
 
         stage('Deploy to Kubernetes') {
             steps {
-                sh '''
-                    export KUBECONFIG=/var/lib/jenkins/.kube/config
-                    kubectl apply -f deployment.yaml
-                    kubectl rollout status deployment/nodejs-app
-                '''
+                script {
+                    withEnv(["KUBECONFIG=${KUBECONFIG_PATH}"]) {
+                        sh '''
+                            kubectl apply -f deployment.yaml
+                            kubectl rollout status deployment/nodejs-app
+                        '''
+                    }
+                }
             }
         }
     }
