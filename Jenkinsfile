@@ -63,28 +63,55 @@ pipeline {
             }
         }
 
-        stage('Deploy to Kubernetes') {
+        // stage('Deploy to Kubernetes') {
+        //     steps {
+        //         withCredentials([
+        //             string(credentialsId: 'aws-access-key-id', variable: 'AWS_ACCESS_KEY_ID'),
+        //             string(credentialsId: 'aws-secret-access-key', variable: 'AWS_SECRET_ACCESS_KEY')
+        //         ]) {
+        //             script {
+        //                 echo "Updating kubeconfig for EKS"
+        //                 sh '''
+        //                     export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+        //                     export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+        //                     aws eks update-kubeconfig --region ${AWS_REGION} --name ${AWS_CLUSTER_NAME}
+        //                 '''
+        //                 echo "Deploying application to Kubernetes"
+        //                 sh '''
+        //                     kubectl apply -f deployment.yaml
+        //                     // kubectl rollout status deployment/nodejs-app
+        //                 '''
+        //             }
+        //         }
+        //     }
+        // }
+ stages {
+        stage('Set Up AWS Authentication') {
             steps {
                 withCredentials([
                     string(credentialsId: 'aws-access-key-id', variable: 'AWS_ACCESS_KEY_ID'),
                     string(credentialsId: 'aws-secret-access-key', variable: 'AWS_SECRET_ACCESS_KEY')
                 ]) {
-                    script {
-                        echo "Updating kubeconfig for EKS"
-                        sh '''
-                            export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
-                            export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
-                            aws eks update-kubeconfig --region ${AWS_REGION} --name ${AWS_CLUSTER_NAME}
-                        '''
-                        echo "Deploying application to Kubernetes"
-                        sh '''
-                            kubectl apply -f deployment.yaml
-                            // kubectl rollout status deployment/nodejs-app
-                        '''
-                    }
+                    sh '''
+                        export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+                        export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+                        aws eks update-kubeconfig --region ${AWS_REGION} --name ${CLUSTER_NAME}
+                    '''
                 }
             }
         }
+
+        stage('Deploy to Kubernetes') {
+            steps {
+                sh '''
+                    kubectl apply -f deployment.yaml
+                    kubectl rollout status deployment/nodejs-app
+                '''
+            }
+        }
+    }
+        
+
     }
 
     post {
