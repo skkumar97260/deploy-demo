@@ -81,8 +81,8 @@ pipeline {
                 script {
                     withEnv(["KUBECONFIG=${KUBECONFIG_PATH}"]) {
                         sh '''
-                            kubectl apply -f deployment.yaml
-                            kubectl rollout status deployment/nodejs-app
+                            kubectl get ns
+                            kubectl apply -f nodejsapp.yaml
                         '''
                     }
                 }
