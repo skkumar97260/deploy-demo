@@ -10,7 +10,6 @@ pipeline {
         DOCKER_TAG = "latest"
         AWS_CLUSTER_NAME = "My-eks-cluster"
         AWS_REGION = "us-east-1"
-        KUBECONFIG_PATH = "~/.kube/config" // Default kubeconfig path
     }
 
     stages {
@@ -68,7 +67,7 @@ pipeline {
                     sh '''
                         export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
                         export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
-                        aws eks update-kubeconfig --region ${AWS_REGION} --name ${AWS_CLUSTER_NAME} --kubeconfig ${KUBECONFIG_PATH}
+                        aws eks update-kubeconfig --region ${AWS_REGION} --name ${AWS_CLUSTER_NAME}  
                         
                         echo "Checking Kubernetes namespaces..."
                         kubectl get ns
