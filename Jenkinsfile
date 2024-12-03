@@ -8,7 +8,7 @@ pipeline {
     environment {
         DOCKER_IMAGE = "skkumar97260/sk-image"
         DOCKER_TAG = "latest"
-        AWS_CLUSTER_NAME = "My-eks-cluster"
+        AWS_CLUSTER_NAME = "my-eks-cluster"
         AWS_REGION = "us-east-1"
     }
 
