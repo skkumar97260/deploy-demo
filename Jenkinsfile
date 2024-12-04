@@ -74,7 +74,7 @@ pipeline {
 
                         echo "Applying Kubernetes manifest..."
                         kubectl apply -f nodejsapp.yaml
-                        kubectl rollout status deployment/nodejs-app
+                        kubectl rollout status deployment/nodejs-app --timeout=60s
                     '''
                 }
             }
