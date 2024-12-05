@@ -30,9 +30,7 @@ metadata:
 spec:
   selector:
     app: nodejs-app
-  type: ClusterIP 
-  externalIPs:
-    - 192.168.0.10
+  type: LoadBalancer
   ports:
   - name: http
     targetPort: 3000
