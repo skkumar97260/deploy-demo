@@ -1,4 +1,4 @@
---- 
+---
 kind: Deployment
 apiVersion: apps/v1
 metadata:
@@ -21,6 +21,7 @@ spec:
         image: "skkumar97260/sk-image:latest"
         ports:
           - containerPort: 3000
+
 ---
 apiVersion: v1
 kind: Service
@@ -30,8 +31,33 @@ metadata:
 spec:
   selector:
     app: nodejs-app
-  type: LoadBalancer
+  type: NodePort
   ports:
-  - name: http
-    targetPort: 3000
-    port: 80
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nodejs-app-ingress
+  namespace: default
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80}]'
+    alb.ingress.kubernetes.io/backend-protocol: HTTP
+    alb.ingress.kubernetes.io/subnets: "subnet-01801b7b564bff2f1,subnet-0615c67ca4944a054"
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: nodejs-app
+                port:
+                  number: 80
