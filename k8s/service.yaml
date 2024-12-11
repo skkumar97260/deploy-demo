@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nodejs-app
+  namespace: nodejs-app-namespace
+spec:
+  selector:
+    app: nodejs-app
+  ports:
+    - protocol: TCP
+      port: 80        # Exposing the service externally on port 80
+      targetPort: 3000 # Targeting the container's port 3000
+  type: ClusterIP   # Internal Kubernetes service

@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nodejs-app
+  namespace: nodejs-app-namespace
+  labels:
+    app: nodejs-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nodejs-app
+  template:
+    metadata:
+      labels:
+        app: nodejs-app
+    spec:
+      containers:
+        - name: nodejs-app
+          image: "skkumar97260/sk-image:latest"
+          ports:
+            - containerPort: 3000
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "250m"
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 3
+            periodSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 3
+            periodSeconds: 5
