@@ -9,7 +9,7 @@ metadata:
     alb.ingress.kubernetes.io/target-type: ip          # Target IP mode for routing to pods directly
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80}]' # Listen on port 80 for HTTP
     alb.ingress.kubernetes.io/backend-protocol: HTTP   # Backend protocol for communication with pods
-    alb.ingress.kubernetes.io/subnets: "subnet-01ef1e4073ed088a0,subnet-0af953e1e6b57bccd,subnet-0ed57ae70b49e0a46,subnet-078a1ea5bdb97fdcc" # AWS subnets for ALB
+    alb.ingress.kubernetes.io/subnets: "subnet-0af953e1e6b57bccd,subnet-01ef1e4073ed088a0" # AWS subnets for ALB
 spec:
   rules:
     - http:
