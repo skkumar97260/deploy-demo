@@ -1,6 +1,6 @@
 pipeline {
     agent any
- 
+
     tools {
         nodejs "nodejs" // Ensure Node.js is configured in Jenkins
     }
@@ -61,7 +61,7 @@ pipeline {
 
         stage('Deploy to Kubernetes') {
             steps {
-                withCredentials([
+                withCredentials([ 
                     string(credentialsId: 'aws-access-key-id', variable: 'AWS_ACCESS_KEY_ID'),
                     string(credentialsId: 'aws-secret-access-key', variable: 'AWS_SECRET_ACCESS_KEY')
                 ]) {
@@ -75,7 +75,9 @@ pipeline {
                         kubectl create namespace ${KUBERNETES_NAMESPACE} || true
 
                         echo "Applying Kubernetes manifests..."
-                        kubectl apply -n ${KUBERNETES_NAMESPACE} -f nodejsapp.yaml
+                        kubectl apply -n ${KUBERNETES_NAMESPACE} -f k8s/deployment.yaml
+                        kubectl apply -n ${KUBERNETES_NAMESPACE} -f k8s/service.yaml
+                        kubectl apply -n ${KUBERNETES_NAMESPACE} -f k8s/ingress.yaml
                     '''
                 }
             }
