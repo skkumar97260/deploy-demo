@@ -5,11 +5,11 @@ metadata:
   namespace: nodejs-app-namespace
   annotations:
     kubernetes.io/ingress.class: alb
-    alb.ingress.kubernetes.io/scheme: internet-facing # Exposing the Ingress to the internet
-    alb.ingress.kubernetes.io/target-type: ip          # Target IP mode for routing to pods directly
-    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80}]' # Listen on port 80 for HTTP
-    alb.ingress.kubernetes.io/backend-protocol: HTTP   # Backend protocol for communication with pods
-    alb.ingress.kubernetes.io/subnets: "subnet-0af953e1e6b57bccd,subnet-01ef1e4073ed088a0" # AWS subnets for ALB
+    alb.ingress.kubernetes.io/scheme: internet-facing 
+    alb.ingress.kubernetes.io/target-type: ip         
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80}]' 
+    alb.ingress.kubernetes.io/backend-protocol: HTTP  
+    alb.ingress.kubernetes.io/subnets: "subnet-0af953e1e6b57bccd,subnet-01ef1e4073ed088a0" 
 spec:
   rules:
     - http:
@@ -20,4 +20,4 @@ spec:
             service:
               name: nodejs-app
               port:
-                number: 80  # The service exposes port 80 externally
+                number: 80  
