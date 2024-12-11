@@ -1,15 +1,16 @@
 pipeline {
     agent any
-                              
+
     tools {
-        nodejs "nodejs" // Ensure Node.js is installed and configured in Jenkins
+        nodejs "nodejs" // Ensure Node.js is configured in Jenkins
     }
 
     environment {
         DOCKER_IMAGE = "skkumar97260/sk-image"
         DOCKER_TAG = "latest"
-        AWS_CLUSTER_NAME = "my-eks-cluster"
+        AWS_CLUSTER_NAME = "my-eks-cluster1"
         AWS_REGION = "us-east-1"
+        KUBERNETES_NAMESPACE = "nodejs-app-namespace"
     }
 
     stages {
@@ -67,14 +68,14 @@ pipeline {
                     sh '''
                         export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
                         export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
-                        aws eks update-kubeconfig --region ${AWS_REGION} --name ${AWS_CLUSTER_NAME}  
-                        
-                        echo "Checking Kubernetes namespaces..."
-                        kubectl get ns
 
-                        echo "Applying Kubernetes manifest..."
-                        kubectl apply -f nodejsapp.yaml
-                        
+                        aws eks update-kubeconfig --region ${AWS_REGION} --name ${AWS_CLUSTER_NAME}
+
+                        echo "Creating Kubernetes namespace..."
+                        kubectl create namespace ${KUBERNETES_NAMESPACE} || true
+
+                        echo "Applying Kubernetes manifests..."
+                        kubectl apply -n ${KUBERNETES_NAMESPACE} -f nodejsapp.yaml
                     '''
                 }
             }
