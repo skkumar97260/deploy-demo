@@ -3,8 +3,8 @@ kind: Service
 metadata:
   name: nodejs-app
   namespace: nodejs-app-namespace
-  labels:
-    app: nodejs-app
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: nlb
 spec:
   type: LoadBalancer
   selector:
