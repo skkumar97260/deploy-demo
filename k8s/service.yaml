@@ -3,13 +3,11 @@ kind: Service
 metadata:
   name: nodejs-app
   namespace: nodejs-app-namespace
-  labels:
-    app: nodejs-app
 spec:
-  type: ClusterIP
   selector:
     app: nodejs-app
   ports:
     - protocol: TCP
-      port: 80
-      targetPort: 3000
+      port: 80       
+      targetPort: 3000 
+  type: ClusterIP  
