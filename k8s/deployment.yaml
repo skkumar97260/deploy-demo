@@ -22,8 +22,8 @@ spec:
     spec:
       containers:
         - name: nodejs-app
+          image: "skkumar97260/sk-image:latest"
           imagePullPolicy: Always
-          image: "skkumar97260/sk-image:latest"  
           ports:
             - containerPort: 3000
           resources:
@@ -37,11 +37,11 @@ spec:
             httpGet:
               path: /
               port: 3000
-            initialDelaySeconds: 3
-            periodSeconds: 5
+            initialDelaySeconds: 5
+            periodSeconds: 10
           readinessProbe:
             httpGet:
               path: /
               port: 3000
-            initialDelaySeconds: 3
-            periodSeconds: 5
+            initialDelaySeconds: 5
+            periodSeconds: 10
