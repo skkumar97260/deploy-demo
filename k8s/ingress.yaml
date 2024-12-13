@@ -4,13 +4,12 @@ metadata:
   name: nodejs-app-ingress
   namespace: nodejs-app-namespace
   annotations:
-    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/load-balancer-name: nodejs-app-alb
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
-    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80}]'
-    alb.ingress.kubernetes.io/backend-protocol: HTTP
-    alb.ingress.kubernetes.io/subnets: "subnet-0af953e1e6b57bccd,subnet-01ef1e4073ed088a0"
+    alb.ingress.kubernetes.io/subnets: "subnet-0af953e1e6b57bccd,subnet-01ef1e4073ed088a0"  
 spec:
+  ingressClassName: alb  
   rules:
     - http:
         paths:

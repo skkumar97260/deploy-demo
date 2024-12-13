@@ -10,6 +10,11 @@ spec:
   selector:
     matchLabels:
       app: nodejs-app
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
   template:
     metadata:
       labels:
@@ -17,7 +22,8 @@ spec:
     spec:
       containers:
         - name: nodejs-app
-          image: "skkumar97260/sk-image:latest"
+          imagePullPolicy: Always
+          image: "skkumar97260/sk-image:latest"  
           ports:
             - containerPort: 3000
           resources:
