@@ -19,8 +19,8 @@ metadata:
 spec:
   ingressClassName: alb
   rules:
-   - host: nodejs-app-alb-1415522548.us-east-1.elb.amazonaws.com
-    - http:
+    - host: nodejs-app-alb-1415522548.us-east-1.elb.amazonaws.com
+      http:
         paths:
           - path: /
             pathType: Prefix
