@@ -78,7 +78,10 @@ pipeline {
                         kubectl apply -n ${KUBERNETES_NAMESPACE} -f k8s/deployment.yaml
                         kubectl apply -n ${KUBERNETES_NAMESPACE} -f k8s/service.yaml
                         kubectl apply -n ${KUBERNETES_NAMESPACE} -f k8s/ingress.yaml
-                       
+                        kubectl apply -n ${KUBERNETES_NAMESPACE} -f k8s/hpa.yaml
+
+                        echo "Waiting for deployment to complete..."
+                        kubectl rollout restart deployment/nodejs-app -n ${KUBERNETES_NAMESPACE}
                     '''
                 }
             }
