@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
         - name: nodejs-app
-          image: "skkumar97260/sk-image:latest"
+          image: "skkumar97260/sk-image:latest" 
           imagePullPolicy: Always
           ports:
             - containerPort: 3000
