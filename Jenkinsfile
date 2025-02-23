@@ -8,9 +8,9 @@ pipeline {
     environment {
         DOCKER_IMAGE = "skkumar97260/sk-image"
         DOCKER_TAG = "latest"
-        AWS_CLUSTER_NAME = "my-eks-cluster1"
+        AWS_CLUSTER_NAME = "my-eks-cluster"
         AWS_REGION = "us-east-1"
-        KUBERNETES_NAMESPACE = "nodejs-app-namespace"
+        KUBERNETES_NAMESPACE = "kube-system"
     }
 
     stages {

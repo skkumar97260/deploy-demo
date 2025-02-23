@@ -2,7 +2,7 @@ apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: nodejs-app-hpa
-  namespace: nodejs-app-namespace
+  namespace: kube-system
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
