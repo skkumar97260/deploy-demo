@@ -20,6 +20,7 @@ metadata:
     alb.ingress.kubernetes.io/subnets: "subnet-0eb49d0e939a675e0,subnet-0b8afd2b66adcdf52"
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS": 443}]' 
     # alb.ingress.kubernetes.io/certificate-arn: "arn:aws:acm:us-east-1:241533137992:certificate/11f947fe-d73d-4bcb-91e6-4d387ed818a4"
+    
 spec:
   ingressClassName: alb
   rules:
