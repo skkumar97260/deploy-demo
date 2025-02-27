@@ -10,7 +10,7 @@ metadata:
     alb.ingress.kubernetes.io/target-type: ip  
     # alb.ingress.kubernetes.io/tags: "Name=my-eks-cluster"
     # alb.ingress.kubernetes.io/ssl-redirect: '443'
-    alb.ingress.kubernetes.io/healthcheck-port: "5000"  
+    alb.ingress.kubernetes.io/healthcheck-port: "80"  
     alb.ingress.kubernetes.io/healthcheck-path: "/"
     alb.ingress.kubernetes.io/healthcheck-interval-seconds: "43"
     alb.ingress.kubernetes.io/healthcheck-timeout-seconds: "40"
@@ -33,4 +33,4 @@ spec:
               service:
                 name: nodejs-app
                 port:
-                  number: 5000  
+                  number: 80
