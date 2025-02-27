@@ -23,7 +23,7 @@ metadata:
 spec:
   ingressClassName: alb
   rules:
-    - host: pixalivetech.com
+    - host: nodejs-app-alb-1834078864.us-east-1.elb.amazonaws.com
       http:
         paths:
           - path: /
