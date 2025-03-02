@@ -13,7 +13,6 @@ pipeline {
         KUBERNETES_NAMESPACE = "kube-system"
     }
 
-
     stages {
         stage('Clone Code from GitHub') {
             steps {

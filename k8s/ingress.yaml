@@ -7,8 +7,8 @@ metadata:
     kubernetes.io/ingress.class: "alb"
     alb.ingress.kubernetes.io/load-balancer-name: "nodejs-app-alb"
     alb.ingress.kubernetes.io/scheme: internet-facing
-    alb.ingress.kubernetes.io/target-type: ip  
-    alb.ingress.kubernetes.io/healthcheck-port: "3000"  
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/healthcheck-port: "3000"
     alb.ingress.kubernetes.io/healthcheck-path: "/"
     alb.ingress.kubernetes.io/healthcheck-interval-seconds: "43"
     alb.ingress.kubernetes.io/healthcheck-timeout-seconds: "40"
@@ -16,13 +16,12 @@ metadata:
     alb.ingress.kubernetes.io/healthy-threshold-count: "3"
     alb.ingress.kubernetes.io/unhealthy-threshold-count: "3"
     alb.ingress.kubernetes.io/subnets: "subnet-0b69a138a6244d78b,subnet-0a7f5b5c21b286c8a"
-    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]' 
- 
-
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]' 
+    alb.ingress.kubernetes.io/certificate-arn: "arn:aws:acm:us-east-1:241533137992:certificate/6a61ad69-ae91-4be3-98cc-f7a1d4ff46fe"  # Replace with your actual certificate ARN
 spec:
   ingressClassName: alb
   rules:
-    - host: nodejs-app-alb-1834078864.us-east-1.elb.amazonaws.com
+    - host: pixalivetech.com
       http:
         paths:
           - path: /
