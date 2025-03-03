@@ -9,7 +9,7 @@ const HOST = '0.0.0.0';
 // App
 const app = express();
 app.get('/', (req, res) => {
-  res.send('Welcome to my Node.js app!');
+  res.send('Welcome to My PixaliveTech App!');
 });
 
 app.listen(PORT, HOST);
