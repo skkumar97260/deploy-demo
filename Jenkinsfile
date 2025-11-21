@@ -14,7 +14,7 @@ pipeline {
     }
 
     stages {
-        stage('Clone Code from GitHub') {
+        stage('Clone Code from GitHub') { // 5 stages
             steps {
                 checkout scmGit(
                     branches: [[name: '*/main']],
@@ -75,6 +75,8 @@ pipeline {
                         kubectl create namespace ${KUBERNETES_NAMESPACE} || true
 
                         echo "Applying Kubernetes manifests..."
+                        kubectl apply -n ${KUBERNETES_NAMESPACE} -f k8s/configmap.yaml
+                        kubectl apply -n ${KUBERNETES_NAMESPACE} -f k8s/secrets.yaml
                         kubectl apply -n ${KUBERNETES_NAMESPACE} -f k8s/deployment.yaml
                         kubectl apply -n ${KUBERNETES_NAMESPACE} -f k8s/service.yaml
                         kubectl apply -n ${KUBERNETES_NAMESPACE} -f k8s/ingress.yaml
